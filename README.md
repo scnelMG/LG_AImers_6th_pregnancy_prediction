@@ -82,6 +82,8 @@ flowchart LR
 .
 ├── README.md
 ├── requirements.txt
+├── src/
+│   └── train.py
 ├── notebooks/
 │   ├── LG_AImers_6기_우리오디가_제출코드.ipynb
 │   ├── README.md
@@ -96,10 +98,10 @@ flowchart LR
 
 ```bash
 pip install -r requirements.txt
-jupyter notebook notebooks/LG_AImers_6기_우리오디가_제출코드.ipynb
+python src/train.py
 ```
 
-실행 전 대회 데이터 파일을 `data/` 디렉터리에 배치해야 합니다. 노트북 실행 결과로 제출 파일은 `data/최종제출본.csv` 경로에 생성됩니다.
+실행 전 대회 데이터 파일을 `data/` 디렉터리에 배치해야 합니다. 실행 결과로 제출 파일은 `data/최종제출본.csv` 경로에 생성됩니다. 원본 실험 흐름은 `notebooks/`에서 확인할 수 있습니다.
 
 ## 8. What I Learned
 
