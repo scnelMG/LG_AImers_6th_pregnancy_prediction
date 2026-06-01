@@ -1,0 +1,23 @@
+# Competition data and generated artifacts
+data/
+outputs/
+models/
+*.pkl
+*.joblib
+*.csv
+
+# Notebook/runtime noise
+.ipynb_checkpoints/
+__pycache__/
+*.py[cod]
+
+# Local environments
+.env
+.venv/
+venv/
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
