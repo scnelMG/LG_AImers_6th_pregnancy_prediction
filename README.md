@@ -1,165 +1,92 @@
-# LG Aimers 6th Pregnancy Prediction
+# LG AImers 6기 - 임신 성공 여부 예측
 
-Machine-learning competition project for predicting pregnancy success from fertility-treatment tabular data, documented as a non-clinical portfolio artifact.
+> 난임 시술 tabular 데이터를 바탕으로 임신 성공 확률을 예측한 의료 인접 영역의 경진대회 ML 프로젝트입니다.
 
-## Overview
+[![Python](https://img.shields.io/badge/Python-ML%20Pipeline-3776AB?logo=python&logoColor=white)](src/train.py)
+[![LightGBM](https://img.shields.io/badge/LightGBM-ROC--AUC-02569B)](docs/modeling-or-method.md)
+[![Optuna](https://img.shields.io/badge/Optuna-Hyperparameter%20Tuning-6F42C1)](docs/project-summary.md)
+[![Portfolio](https://img.shields.io/badge/Portfolio-Sensitive%20Data%20Aware-2ea44f)](notebooks/README.md)
 
-This repository organizes a LG Aimers 6th competition solution around a binary classification task: estimate the probability of pregnancy success from structured fertility-treatment records. The public repository is intended for reviewer inspection of the modeling workflow, not for clinical use.
+## 개요
 
-| Item | Details |
+LG AImers 6기 경진대회에서 진행한 임신 성공 여부 예측 프로젝트입니다. 난임 시술 기록의 범주형/수치형 feature, 결측, 시술 이력, 배아 관련 변수를 활용해 binary classification pipeline을 구성했습니다.
+
+의료 인접 데이터를 다루는 프로젝트이므로, 이 저장소는 임상적 주장보다 데이터 처리, 검증 설계, 모델 비교, 공개 안전성에 초점을 둡니다. 진단, 치료 판단, 의료 조언 목적이 아닙니다.
+
+## 빠른 검토 경로
+
+| 먼저 볼 것 | 확인할 내용 |
 | --- | --- |
-| Domain | Fertility-treatment / medical-adjacent tabular prediction |
-| Task | Binary classification |
-| Competition metric | ROC-AUC |
-| Main models | LightGBM, XGBoost, CatBoost |
-| Main contribution | preprocessing, feature handling, validation design, imbalance experiments, Optuna tuning, submission generation |
-| Public reproducibility | inspection-first; full rerun requires competition CSV files that are not redistributed |
+| [docs/project-summary.md](docs/project-summary.md) | 문제 정의, 역할, 데이터 공개 경계 |
+| [docs/modeling-or-method.md](docs/modeling-or-method.md) | 전처리, validation, 모델 비교, tuning 전략 |
+| [notebooks/README.md](notebooks/README.md) | notebook별 실험 흐름과 공개 범위 |
+| [src/train.py](src/train.py) | 재사용 가능한 학습 스크립트 |
 
-## Problem
+## 문제 정의
 
-Fertility-treatment records combine procedure history, patient-state fields, embryo-related attributes, missing values, and categorical treatment codes. The competition objective was to rank pregnancy-success likelihood for submission scoring, while the portfolio objective is to show how the modeling pipeline handled imbalanced, sensitive, medical-adjacent tabular data responsibly.
+난임 시술 데이터는 시술 유형, 환자 상태, 시술 이력, 배아 관련 변수, 결측값, 범주형 코드가 복합적으로 섞여 있습니다. 목표는 임신 성공 여부를 binary classification으로 예측하고, ROC-AUC 기준으로 모델을 비교하는 것입니다.
 
-The practical challenge was not to create clinical advice. It was to build a stable competition pipeline with cautious validation, clear data-publication limits, and no unsupported medical claims.
+핵심은 높은 점수를 만드는 것뿐 아니라 민감한 도메인에서 과장된 의학적 해석을 피하고, 공개 가능한 자료와 비공개 자료를 명확히 분리하는 것입니다.
 
-## Role
+## 내 역할
 
-My work focused on the end-to-end modeling pipeline:
+- 상수/완전 결측/저신호 컬럼 정리
+- 시술 맥락에 따른 결측값 처리와 범주형 encoding
+- LightGBM, XGBoost, CatBoost 비교
+- class weight, RandomOverSampler, SMOTE 등 불균형 대응 실험
+- Optuna 기반 hyperparameter tuning과 submission 생성
+- notebook 실험과 `src/train.py` 실행 경로 분리
 
-- cleaned low-signal columns such as constants and fully missing features;
-- designed missing-value handling for treatment-specific fields;
-- encoded categorical treatment and history features for tree-based models;
-- compared LightGBM, XGBoost, and CatBoost under the same 5-fold validation setup;
-- tested class-imbalance strategies, including model class weights, random oversampling, and SMOTE;
-- tuned top candidates with Optuna and generated submission files;
-- separated the reusable script in `src/train.py` from exploratory notebooks under `notebooks/`.
+## 기술적 의사결정
 
-This was a competition and portfolio project, not a deployed product or clinical decision-support system.
+| 영역 | 선택 | 이유 |
+| --- | --- | --- |
+| 평가 지표 | ROC-AUC | 확률 ranking 품질을 비교하기 위한 대회 metric입니다. |
+| 모델군 | LightGBM, XGBoost, CatBoost | tabular competition에서 강하고 결측/범주형 처리 전략을 비교하기 좋습니다. |
+| 검증 | 5-fold validation | 단일 split에 대한 과적합을 줄이고 tuning 안정성을 확인했습니다. |
+| 불균형 대응 | class weight, oversampling, SMOTE | 성공/실패 class 비율 차이에 따른 trade-off를 점검했습니다. |
+| 공개 정책 | inspection-first | 원본 의료 인접 대회 데이터와 생성 파일을 공개하지 않습니다. |
 
-## Data
-
-The original `train.csv`, `test.csv`, and `sample_submission.csv` files were provided for the competition. They are intentionally excluded from this repository because the dataset is domain-sensitive and may be subject to competition redistribution limits.
-
-Expected local layout for an authorized rerun:
-
-```text
-data/
-  train.csv
-  test.csv
-  sample_submission.csv
-```
-
-Public boundary:
-
-- raw competition data is not included;
-- generated submission CSVs are not included;
-- Drive scratch/copy notebooks and data folders are excluded from the review path;
-- the repository documents methodology and provides code, but does not publish patient-level records or claim clinical validity.
-
-## Validation
-
-The project uses ROC-AUC because the target is imbalanced and ranking quality matters more than a fixed probability threshold for the competition objective.
-
-Validation design:
-
-1. remove identifier columns and uninformative features;
-2. process missing values and treatment-specific feature groups;
-3. encode categorical variables with `OneHotEncoder(handle_unknown="ignore")`;
-4. evaluate candidate models with 5-fold `StratifiedKFold`;
-5. compare baseline class-imbalance treatments;
-6. tune the strongest model/sampling combination with Optuna;
-7. train the selected model and write the submission probability file.
-
-Tracked experiment notebooks record cross-validation results around ROC-AUC 0.74 for tuned LightGBM-style experiments. Treat those as competition-validation evidence only; they are not external validation, prospective validation, or clinical performance evidence. The `notebooks/experiments/` folder is not blanket public-safe evidence because it contains an `_원본.ipynb` original-copy notebook that still requires user review before publication.
-
-## Model
-
-The final public script, `src/train.py`, keeps the competition workflow in a cleaner form:
+## 파이프라인
 
 ```mermaid
 flowchart LR
-    A["Competition CSVs"] --> B["Column filtering"]
-    B --> C["Missing-value handling"]
-    C --> D["Categorical encoding"]
-    D --> E["5-fold stratified CV"]
-    E --> F["Sampling / class-weight tests"]
-    F --> G["Model comparison"]
-    G --> H["Optuna tuning"]
-    H --> I["Full-data fit"]
-    I --> J["Submission postprocessing"]
+    A["대회 CSV"] --> B["컬럼 정리 / 결측 처리"]
+    B --> C["범주형 encoding"]
+    C --> D["5-fold validation"]
+    D --> E["LGBM / XGB / CatBoost"]
+    E --> F["Optuna tuning"]
+    F --> G["Submission 생성"]
 ```
 
-Model choices were intentionally conservative for tabular competition data:
+## 재현 가능성
 
-- **LightGBM / XGBoost / CatBoost**: strong gradient-boosted tree baselines for heterogeneous structured features.
-- **Class-imbalance handling**: model-native weights plus oversampling variants were compared instead of assuming one imbalance strategy.
-- **Optuna tuning**: randomized search followed by TPE search narrowed hyperparameters for the selected candidate.
-- **Postprocessing**: observed deterministic treatment conditions were applied at submission time, but these rules are documented as competition heuristics, not medical rules.
-
-More detail is available in [`docs/modeling-or-method.md`](docs/modeling-or-method.md).
-
-## Reproduce
-
-Install dependencies:
+공식 대회 CSV가 있어야 전체 실행이 가능합니다.
 
 ```bash
 pip install -r requirements.txt
-```
-
-Run the script after placing authorized competition CSV files in `data/`:
-
-```bash
 python src/train.py
 ```
 
-Expected output:
+공개 checkout에서는 `docs/`, `notebooks/README.md`, `src/train.py`를 통해 모델링 구조를 검토할 수 있습니다.
 
-```text
-data/최종제출본.csv
-```
+## 공개/비공개 경계
 
-Because the raw dataset is not public, reviewers can still inspect:
+제외한 것:
 
-- `src/train.py` for the cleaned training pipeline;
-- `notebooks/LG_AImers_6기_우리오디가_제출코드.ipynb` for the competition submission flow;
-- reviewed notebooks only after user confirmation; `notebooks/experiments/` currently contains an `_원본.ipynb` blocker and should not be treated as public-safe or inspectable evidence yet;
-- `docs/project-summary.md` and `docs/modeling-or-method.md` for reviewer-oriented notes.
+- 원본 대회 CSV와 생성 submission
+- 의료 인접 raw data, Drive scratch notebook, 대용량 archive
+- token, credential, 개인정보 가능 자료
 
-## Evidence
+포함한 것:
 
-Cleared evidence available in this repository after the current docs review:
+- 공개 가능한 학습 스크립트와 notebook 안내
+- 모델링 방법론과 한계 문서
+- 데이터 공개 경계 설명
 
-- implementation artifact: [`src/train.py`](src/train.py);
-- final submission notebook: `notebooks/LG_AImers_6기_우리오디가_제출코드.ipynb`;
-- project notes: [`docs/project-summary.md`](docs/project-summary.md);
-- modeling notes: [`docs/modeling-or-method.md`](docs/modeling-or-method.md).
+## 한계
 
-Publication blocker: `notebooks/experiments/` contains a tracked `_원본.ipynb` original-copy notebook. Do not present that folder or the `_원본.ipynb` notebook as public-safe evidence until the user reviews and either confirms, sanitizes, renames, or removes it.
-
-Local portfolio QA evidence is stored outside the repo under `.omo/evidence/practitioner-github-portfolio/`.
-
-## Ethical and Non-Clinical Use
-
-This repository is a non-clinical machine-learning competition portfolio project. It must not be used to advise patients, rank treatment options, predict an individual's outcome for care decisions, or replace medical judgment.
-
-Ethical boundaries:
-
-- pregnancy and fertility data is sensitive health-adjacent information;
-- public documentation avoids patient-level examples and raw records;
-- validation is limited to competition-style retrospective splits;
-- no fairness, subgroup safety, calibration, deployment monitoring, or clinical review has been completed;
-- any real-world use would require domain expert review, data-governance approval, external validation, and clear consent/legal basis.
-
-## Limitations
-
-- Full reproduction is blocked unless the reviewer already has authorized access to the competition data.
-- Cross-validation is retrospective and may not represent future clinics, patient groups, treatment protocols, or data-collection processes.
-- ROC-AUC does not prove calibrated probabilities or clinically actionable thresholds.
-- Postprocessing rules are competition heuristics inferred from available fields; they should not be interpreted as medical knowledge.
-- The repository intentionally excludes raw data, generated CSVs, Drive scratch/copy notebooks, and private artifacts.
-- No deployment, monitoring, privacy threat model, or clinical safety evaluation is included.
-
-## References
-
-- [LG Aimers](https://www.lgaimers.ai/)
-- [DACON](https://dacon.io/)
-- [Project write-up](https://pmq0328.tistory.com/7)
+- 임상적 의사결정에 사용할 수 없습니다.
+- leaderboard 점수만으로 일반화 성능을 보장할 수 없습니다.
+- postprocessing은 대회 feature에 맞춘 heuristic이며 의학 지식으로 해석하면 안 됩니다.
+- 배포, 모니터링, privacy threat model은 포함하지 않았습니다.
