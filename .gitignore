@@ -11,6 +11,9 @@ models/
 __pycache__/
 *.py[cod]
 
+# Public portfolio exclusions pending notebook review
+notebooks/experiments/*원본.ipynb
+
 # Local environments
 .env
 .venv/
