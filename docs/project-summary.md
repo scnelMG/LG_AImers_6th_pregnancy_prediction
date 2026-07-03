@@ -1,21 +1,49 @@
 # Project Summary
 
-## 한 줄 요약
+## One-Line Summary
 
-난임 치료 이력 데이터를 활용해 임신 성공 여부를 예측하고, 불균형 데이터 처리와 교차검증 기반 튜닝으로 제출 안정성을 높인 머신러닝 프로젝트입니다.
+This project builds a competition-grade binary classifier for fertility-treatment pregnancy-success prediction while keeping the public portfolio boundary non-clinical and data-safe.
 
-## 기여 내용
+## Problem
 
-- 단일 값 컬럼, 전체 결측 컬럼 등 예측에 기여하지 않는 변수를 제거했습니다.
-- 결측치 및 범주형 변수 처리 후 5-fold Stratified K-Fold 검증 구조를 구성했습니다.
-- LightGBM, XGBoost, CatBoost를 동일한 조건에서 비교했습니다.
-- RandomOverSampler, SMOTE, 클래스 가중치 기반 불균형 대응 방식을 실험했습니다.
-- Optuna로 상위 모델의 하이퍼파라미터를 튜닝했습니다.
-- 데이터에서 관찰된 명시적 규칙을 제출 단계 후처리에 반영했습니다.
+The competition task asks participants to estimate pregnancy-success probability from structured treatment-history data. The practical machine-learning challenge is to handle sparse, categorical, and imbalanced medical-adjacent tabular features without overstating what retrospective competition validation can prove.
 
-## 포트폴리오에서 강조할 포인트
+## Role and Contribution
 
-- 모델을 많이 사용한 점보다, 검증 기준을 ROC-AUC와 Stratified K-Fold로 일관되게 잡은 점
-- 불균형 데이터 문제를 샘플링과 모델 가중치 양쪽에서 비교한 점
-- 대회 데이터 재배포 제한을 고려해 `data/`를 제외하고 재현 방법만 문서화한 점
-- 최종 제출 노트북과 실험 노트북을 분리해 의사결정 흐름을 확인할 수 있게 한 점
+- Built the preprocessing flow for low-information column removal, missing-value handling, categorical encoding, and feature-name cleanup.
+- Compared LightGBM, XGBoost, and CatBoost with the same 5-fold stratified ROC-AUC validation design.
+- Tested imbalance strategies including model class weights, random oversampling, and SMOTE.
+- Used Optuna to tune selected gradient-boosted tree candidates.
+- Preserved a reusable implementation in `src/train.py` and kept exploratory notebooks under `notebooks/`.
+- Documented data-publication limits so the repo can be reviewed without raw competition files.
+
+## Reviewer Path
+
+1. Start with `README.md` for problem framing, role, data policy, validation, and limitations.
+2. Inspect `src/train.py` for the runnable pipeline shape.
+3. Review `notebooks/LG_AImers_6기_우리오디가_제출코드.ipynb` for the competition submission flow.
+4. Treat `notebooks/experiments/` as blocked pending user review because it contains an `_원본.ipynb` original-copy notebook; do not present that folder as public-safe evidence yet.
+5. Use `docs/modeling-or-method.md` for technical decisions and non-clinical constraints.
+
+## Cleared Artifacts
+
+- `src/train.py`: cleaned script version of the competition pipeline.
+- `notebooks/LG_AImers_6기_우리오디가_제출코드.ipynb`: final submission notebook already present in the repository.
+- `requirements.txt`: dependency list for local reproduction with authorized data.
+- Markdown documentation in `README.md` and `docs/`.
+
+Not public-safe yet: `notebooks/experiments/` includes a tracked `_원본.ipynb` original-copy notebook and requires user review before repo-level publication.
+
+## Excluded Materials
+
+- Raw competition data: `train.csv`, `test.csv`, `sample_submission.csv`.
+- Generated submission files and local experiment outputs.
+- Private Drive folders, scratch/copy notebooks, raw data folders, and any unreviewed medical-adjacent artifacts.
+- Any patient-level examples, credentials, or private clinical records.
+
+## Limitations
+
+- The repository is not fully reproducible without authorized access to the competition dataset.
+- Reported notebook validation is retrospective competition evidence only.
+- No external validation, subgroup fairness review, calibration analysis, privacy threat model, or clinical safety review is included.
+- This is a non-clinical portfolio repository and must not be used for patient care or treatment guidance.
