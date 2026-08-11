@@ -1,5 +1,7 @@
 # LG AImers 6기 - 임신 성공 여부 예측
 
+<p align="center">LG AImers 6기 · 의료 데이터 분류 · LightGBM · Python</p>
+
 > 난임 시술 tabular 데이터를 바탕으로 임신 성공 확률을 예측한 의료 인접 영역의 경진대회 ML 프로젝트입니다.
 
 [![Python](https://img.shields.io/badge/Python-ML%20Pipeline-3776AB?logo=python&logoColor=white)](src/train.py)
