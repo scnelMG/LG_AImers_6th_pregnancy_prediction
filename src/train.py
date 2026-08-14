@@ -372,7 +372,8 @@ def apply_postprocessing(sample_submission: pd.DataFrame, test: pd.DataFrame) ->
     sample_submission = sample_submission.copy()
     zero_probability_reasons = ["난자 저장용", "기증용"]
     sample_submission.loc[test["배아 생성 주요 이유"].isin(zero_probability_reasons), "probability"] = 0
-    sample_submission.loc[test["시술 당시 나이"] == -1, "probability"] = 0
+    unknown_age = test["시술 당시 나이"].isin(["알 수 없음", -1])
+    sample_submission.loc[unknown_age, "probability"] = 0
     return sample_submission
 
 

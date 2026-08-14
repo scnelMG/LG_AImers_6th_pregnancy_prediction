@@ -59,24 +59,34 @@ The project uses gradient-boosted tree models because they are strong baselines 
 
 The final script selects the best model/sampling combination from cross-validation, tunes it with Optuna, fits the selected candidate on the prepared training data, and writes a submission file.
 
+The recorded highest-public-score submission used a unified single LightGBM rather than a procedure-specific model or an ensemble. Procedure-specific training and ensembling remain documented experiments; the public materials do not support treating either as the final selected approach.
+
 ## Postprocessing
 
 Submission postprocessing sets probability to zero for a small set of deterministic-looking conditions observed in the competition fields, such as specific embryo-creation reasons and unknown procedure-age encoding.
 
 This is intentionally documented as a competition heuristic. It is not a medical rule and should not be used outside the original competition context.
 
-## Evidence
+## Evidence and Validation Boundary
 
-Evidence boundary:
+The public repository keeps the input code but removes notebook outputs that displayed record-level previews and local environment paths. The following results were cross-checked against the team final presentation and the recorded submission history before output clearing:
 
-Currently inspectable public evidence in this section is limited to the cleaned script and final submission notebook. The `notebooks/experiments/` paths below, including the tracked `_원본.ipynb` original-copy notebook, are blocked pending user review and must not be treated as public-safe or inspectable evidence yet.
+| Experiment | Mean internal 5-fold ROC-AUC |
+| --- | ---: |
+| No sampling + LightGBM default comparison | 0.738864 |
+| LightGBM tuned with Optuna | 0.740108 |
 
-- `src/train.py`: cleaned implementation of the pipeline.
-- `notebooks/LG_AImers_6기_우리오디가_제출코드.ipynb`: final submission notebook.
-- `notebooks/experiments/전처리변경_안나누기_lgbm튜닝더.ipynb`: blocked with the experiment folder until user review clears this path.
-- `notebooks/experiments/전처리변경_안나누기_lgbm튜닝더_원본.ipynb`: blocked original-copy notebook; not public-safe or inspectable evidence until user review clears or removes it.
+The best recorded public submission score is **0.741430139 ROC-AUC**. The competition's public score uses a 50% test-data sample; the retained materials do not establish the final private score or final placement, so neither is claimed.
 
-If reviewed and cleared, notebook outputs include tuned cross-validation results around ROC-AUC 0.74. Those values remain internal competition-validation evidence, not external or clinical evidence.
+Evidence readers can inspect:
+
+- `src/train.py`: cleaned implementation of the current pipeline.
+- `notebooks/final_submission_pipeline.ipynb`: final submission flow with outputs removed.
+- `notebooks/experiments/lgbm_tuning_ensemble.ipynb`: tuning and ensemble experiment code with outputs removed.
+
+The original notebooks apply some data-dependent preprocessing, including mean/mode imputation and one-hot category fitting, before the cross-validation split. These transformations do not use the target, but the resulting ROC-AUC values are **not** strict leakage-free estimates. They are internal competition-validation evidence only, not external, clinical, or deployment evidence.
+
+`src/train.py` is a cleaned, runnable reference to the preserved competition flow. It is not presented as a newly rerun, byte-for-byte reproduction of the historical best submission.
 
 ## Reproducibility Boundary
 
