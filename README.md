@@ -32,15 +32,7 @@
 
 ## 접근 흐름
 
-```mermaid
-flowchart LR
-    A["공식 대회 CSV"] --> B["상수·완전 결측 컬럼 정리"]
-    B --> C["결측 처리·범주형 인코딩"]
-    C --> D["Stratified 5-fold ROC-AUC"]
-    D --> E["LightGBM · XGBoost · CatBoost"]
-    E --> F["불균형 대응·Optuna 튜닝"]
-    F --> G["확률 예측·대회용 후처리"]
-```
+> **분석 흐름**: 공식 대회 CSV → 상수·완전 결측 컬럼 정리 → 결측 처리·범주형 인코딩 → Stratified 5-fold ROC-AUC → LightGBM·XGBoost·CatBoost → 불균형 대응·Optuna 튜닝 → 확률 예측과 제출용 후처리
 
 | 단계 | 구현과 판단 |
 | --- | --- |
